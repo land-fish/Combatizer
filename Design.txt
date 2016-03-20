@@ -1,0 +1,27 @@
+Combatizer Design:
+
+We need the following pieces:
+
+V1:
+
+Pieces:
+1. Original Utility function V (mapping from world number -> utility)
+2. A comparison metric (see paper for examples)
+	a. Comparison metric threshold (ex: 0.9, 0.95) 
+3. A way to disturib (1) to produce a new utility function U, s.t. comparison(U,V)> threshold
+	a. Examples: random noise, swap top actions 
+4. An probability distribution on actions/worlds
+5. Agents (ex: quantilizer, maximizer, other things) 
+6. A way of scoring agents
+	a. Designate a particular world as a no-op world => use cost function 
+	b. Difference in top actions 
+
+Meta:
+a) interface to run things from command line
+b) tests 
+c) putting results into tables, analysis
+d) way to run a giant parameter sweep on everything and look at winners
+
+V2: 
+1. Add multiple ways to do 3, while satisfying certain other constraints
+2. Have agents take multiple utilities as an input 
