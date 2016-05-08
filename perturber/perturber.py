@@ -84,6 +84,9 @@ class Perturber:
         else:
             return s.utilities
     
+    def get_perturbers(s):
+        return [s.normal]
+    
     def h_log(s, logtext):
         return '%s: %s' % (s.__class__.__name__, logtext)
     
@@ -97,4 +100,4 @@ class Perturber:
 if __name__ == '__main__':
     comparitor = lambda x,y: 1 - sum([abs(x[i] - y[i]) for i in range(len(x))])/float(len(x))
     p = Perturber([i/10. for i in range(10)], comparitor, 0.9)
-    p.normal()
+    p.get_perturbers()[0]()
