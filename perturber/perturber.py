@@ -20,7 +20,6 @@ class Perturber:
     #   perturbed utility vector should have to the "utilities" parameter.
     def __init__(s, utilities, comparitor, threshold):
         # Validate input. Save them into the object if they're valid.
-        print utilities, type(utilities)
         if type(utilities) != list:
             raise StandardError(s.h_log('Utilities parameter is not a list'))
         for utility in utilities:
@@ -51,41 +50,35 @@ class Perturber:
                     if s.h_utilities_within_range([cur_result]):
                         break
                 result.append(cur_result)
-            if comparitor(s.utilities, result) >= s.threshold:
+            if s.comparitor(s.utilities, result) >= s.threshold:
                 break
             cur_var /= 2
             
-            # DEBUG
-            print 'cur_var: ' + str(cur_var)
-            print 's.utilities: ' + str(s.utilities)
-            print 'result: ' + str(result)
-            print 'similarity: ' + str(comparitor(s.utilities, result))
-            print
-        
         return result
     
     # Perturb by randomly swapping 2 utilities
     def random_swap(s):
         found_result = False
         for i in range(100):
-            indices = range(len(s.utilities))
+            indexes = range(len(s.utilities))
             c1 = random.choice(indexes)
-            indices.remove(c1)
+            indexes.remove(c1)
             c2 = random.choice(indexes)
             
-            result = utilities[:]
+            result = s.utilities[:]
             result[c1], result[c2] = result[c2], result[c1]
             
-            if s.comparitor(s.utilities, result):
+            if s.comparitor(s.utilities, result) >= s.threshold:
                 found_result = True
-                
+                break
+            
         if found_result:
             return result
         else:
             return s.utilities
     
     def get_perturbers(s):
-        return [s.normal]
+        return [s.normal, s.random_swap]
     
     def h_log(s, logtext):
         return '%s: %s' % (s.__class__.__name__, logtext)
@@ -100,4 +93,4 @@ class Perturber:
 if __name__ == '__main__':
     comparitor = lambda x,y: 1 - sum([abs(x[i] - y[i]) for i in range(len(x))])/float(len(x))
     p = Perturber([i/10. for i in range(10)], comparitor, 0.9)
-    p.get_perturbers()[0]()
+    print p.get_perturbers()[1]()
