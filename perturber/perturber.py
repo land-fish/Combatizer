@@ -1,4 +1,6 @@
-import pymc
+import numpy
+import random
+import math
 
 # A set of methods that return a perturber utility vector subject to parameters given to the constructor. Helper
 # methods are prefixed with "h_".
@@ -7,7 +9,7 @@ import pymc
 #  Perturber(utilities, comparitor, threshold).perturbing_method()
 # Example
 #  import Perturber
-#  perturbed_utilities = Perturber([-1, -0.5, 0, 0.5, 1], some_comparitor, 0.5).normal()
+#  perturbed_utilities = Perturber([-0.5, -1, 0.5, 1, 0], some_comparitor, 0.5).normal()
 class Perturber:
     # Arguments
     #  utilities: A vector of floats with values in [-1,1]. Each element in the vector represents the utility of a
@@ -40,12 +42,12 @@ class Perturber:
     # Perturb by adding normally-distributed noise
     def normal(s):
         cur_var = 1.0
-
+        
         while True:
             result = []
             for utility in s.utilities:
                 while True:
-                    cur_result = utility + pymc.rnormal(0, 1/cur_var)
+                    cur_result = utility + numpy.random.randn() * math.sqrt(cur_var)
                     if s.h_utilities_within_range([cur_result]):
                         break
                 result.append(cur_result)
@@ -61,6 +63,26 @@ class Perturber:
             print
         
         return result
+    
+    # Perturb by randomly swapping 2 utilities
+    def random_swap(s):
+        found_result = False
+        for i in range(100):
+            indices = range(len(s.utilities))
+            c1 = random.choice(indexes)
+            indices.remove(c1)
+            c2 = random.choice(indexes)
+            
+            result = utilities[:]
+            result[c1], result[c2] = result[c2], result[c1]
+            
+            if s.comparitor(s.utilities, result):
+                found_result = True
+                
+        if found_result:
+            return result
+        else:
+            return s.utilities
     
     def h_log(s, logtext):
         return '%s: %s' % (s.__class__.__name__, logtext)
