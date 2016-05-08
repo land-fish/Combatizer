@@ -8,7 +8,7 @@ Pieces:
 1. Original Utility function V (mapping from world number -> utility)
 2. A comparison metric (see paper for examples)
 	a. Comparison metric threshold (ex: 0.9, 0.95) 
-3. A way to disturib (1) to produce a new utility function U, s.t. comparison(U,V)> threshold
+3. A way to perturb (1) to produce a new utility function U, s.t. comparison(U,V)> threshold
 	a. Examples: random noise, swap top actions 
 4. An probability distribution on actions/worlds
 5. Agents (ex: quantilizer, maximizer, other things) 
