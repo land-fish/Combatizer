@@ -1,6 +1,7 @@
 from comparison import comparison_functions
 from agents import agents
 from helper import helper
+from perturber import perturber
 
 #comparisons = comparison_functions.getComparisonMetrics()
 
@@ -19,17 +20,21 @@ class Runner:
 	
 	def generateRun(agentList):
 		#given an agent, pick a random set of ut, gamma, comparison, threshold, 
-		uts = generateUts() #list of utilities
-		gammas = generateGammas()
+		uts = helper.generate_utils_list() #list of utilities
+		gammas = helper.generate_gamma_list()
 		comparisons = comparison.getComparisonMetrics()
-		thresholds = generateThresholds()
-		perturbers = generatePerturbers()
+
+		thresholds = [0.9, 0.95, 0.99]
+
+		#perturbers = [perturber.Perturber]
 		
-		agentScores = [0]* len(agentList)
+		agentScores = [0] * len(agentList)
 		for ut in uts:
 			for gamma in gammas:
 				for comparison in comparisons:
 					for threshold in threshold:
+						perturberClass = perturberClass(ut, comparison, threshold)
+						perturbers = perturberClass.getPerturbers()
 						for perturber in perturbers:
 							agentIndex = 0 
 							for agent in agentList:
@@ -38,8 +43,8 @@ class Runner:
 								agentIndex += 1
 		return agentScores
 	
-	def run(ut, gamma, comparison, threshold, disturber, agent):
-		uO = perturber(ut, gamma, comparison, threshold) #the utility the agent sees
+	def run(ut, gamma, comparison, threshold, perturber, agent):
+		uO = perturber() #the utility the agent sees
 		actionIndex = agent(u0, gamma) #the index of the action the agent has picked 
 		agentScore = ut[actionIndex]
 		return agentScore
