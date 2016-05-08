@@ -30,25 +30,29 @@ def getComparisonMetrics():
     # these four functions calculate the LN norm of the difference vector (where N = 1, 2, inf, -inf)
     def l1_norm(u1, u2):
         difference_vector = np.divide(np.subtract(u1, u2), 2)
-        return np.linalg.norm(difference_vector, 1)
+        return 1 - (np.linalg.norm(difference_vector, 1) * (1/len(u1)))
 
     def l2_norm(u1, u2):
         difference_vector = np.divide(np.subtract(u1, u2), 2)
-        return np.linalg.norm(difference_vector, 2)
+        return 1 - (np.linalg.norm(difference_vector, 2) * (1/len(u1)))
+        # return 1 - np.linalg.norm(difference_vector, 2)
 
     def positive_inf_norm(u1, u2):
         difference_vector = np.divide(np.subtract(u1, u2), 2)
-        return np.linalg.norm(difference_vector, np.inf)
+        return 1 - np.linalg.norm(difference_vector, np.inf)
     
     def negative_inf_norm(u1, u2):
         difference_vector = np.divide(np.subtract(u1, u2), 2)
-        return np.linalg.norm(difference_vector, -np.inf)
+        return 1 - np.linalg.norm(difference_vector, -np.inf)
+
+            
     
     return [cosine_similarity,
             centered_cosine_similarity,
             preference_order_similarity,
-            spearman,
-            l1_norm,
-            l2_norm,
-            positive_inf_norm,
-            negative_inf_norm]
+            spearman]
+
+            #l1_norm,
+            #l2_norm,
+            #positive_inf_norm,
+            #negative_inf_norm]
