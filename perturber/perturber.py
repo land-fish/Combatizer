@@ -70,7 +70,7 @@ class Perturber:
             result = s.utilities
             for aa in top_percent_index:
                 result[aa] = random.random() * 2 - 1 
-            if comparitor(s.utilities, result) >= s.threshold:
+            if s.comparitor(s.utilities, result) >= s.threshold:
                 break
 
         return result      
