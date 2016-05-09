@@ -5,7 +5,7 @@ import math
 # A set of methods that return a perturber utility vector subject to parameters given to the constructor.
 
 # Usage
-#  Perturber(utilities, comparitor, threshold).perturbing_method()
+# Perturber(utilities, comparitor, threshold).perturbing_method()
 # Example
 #  import Perturber, random
 #  perturbers = Perturber([-0.5, -1, 0.5, 1, 0], some_comparitor, 0.5).get_perturbers()
@@ -57,6 +57,26 @@ class Perturber:
             cur_var /= 2  # Reduce variance on failure to increase chance that next iteration will meet threshold
             
         return result
+   
+    # Removes top 10% of utility values and replaces them with random values 
+    def remove_max(s):
+        remove_percent = .1
+          #replace_num is the number of elements in the list to be changed
+        replace_num = int(math.ceil(len(s.utilities) * remove_percent)) 
+        top_percent_index = sorted(range(len(s.utilities)), key=lambda i: s.utilities[i], reverse=True)[:replace_num] 
+        
+        #Replace top values with random values between -1 and 1
+        while True:
+            result = s.utilities
+            for aa in top_percent_index:
+                result[aa] = random.random() * 2 - 1 
+            if s.comparitor(s.utilities, result) >= s.threshold:
+                break
+
+        return result      
+
+    def h_log(s, logtext):
+        return '%s: %s' % (s.__class__.__name__, logtext)
     
     # Perturb by randomly swapping 2 utilities
     def random_swap(s):
@@ -86,7 +106,7 @@ class Perturber:
     
     # Return list of perturbers
     def get_perturbers(s):
-        return [s.normal, s.random_swap]
+        return [s.normal, s.random_swap, s.remove_max]
     
     # Log output
     def log(s, logtext):
@@ -103,5 +123,8 @@ class Perturber:
 # Used for testing
 if __name__ == '__main__':
     comparitor = lambda x,y: 1 - sum([abs(x[i] - y[i]) for i in range(len(x))])/float(len(x))
+    p = Perturber([random.random() * 2 -1 for i in range(100)], comparitor, 0.9)
+    p.normal()
+    p.remove_max()
     p = Perturber([i/10. for i in range(10)], comparitor, 0.999)
     print p.get_perturbers()[0]()
