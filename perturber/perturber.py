@@ -75,6 +75,28 @@ class Perturber:
 
         return result      
 
+    # Replaces set proportion of random utility values with 1 
+    def false_highs(s):
+        replace_percent = .1
+        #replace_num says how many utilites to replace and rounds up
+        replace_num = int(math.ceil(len(s.utilities) * replace_percent)) 
+
+        while True:
+            result = s.utilities
+            replace_list = []
+            #For a random 10% of utilities, try to replace value with 1 until pertubation falls within expected interval 
+            for i in range(replace_num):  
+                index = int(len(s.utilities) * random.random())
+                while index not in replace_list:
+                    replace_list.append(index)   
+            for value in replace_list:
+                result[value] = 1
+            if s.comparitor(s.utilities, result) >= s.threshold:
+                break
+        return result      
+
+ 
+
     def h_log(s, logtext):
         return '%s: %s' % (s.__class__.__name__, logtext)
     
@@ -106,7 +128,7 @@ class Perturber:
     
     # Return list of perturbers
     def get_perturbers(s):
-        return [s.normal, s.random_swap, s.remove_max]
+        return [s.normal, s.random_swap, s.remove_max, s.false_highs]
     
     # Log output
     def log(s, logtext):
@@ -123,8 +145,9 @@ class Perturber:
 # Used for testing
 if __name__ == '__main__':
     comparitor = lambda x,y: 1 - sum([abs(x[i] - y[i]) for i in range(len(x))])/float(len(x))
-    p = Perturber([random.random() * 2 -1 for i in range(100)], comparitor, 0.9)
-    p.normal()
-    p.remove_max()
+    p = Perturber([random.random() * 2 -1 for i in range(10)], comparitor, 0.9)
+    #p.normal()
+    #p.remove_max()
+    p.false_highs()
     p = Perturber([i/10. for i in range(10)], comparitor, 0.999)
     print p.get_perturbers()[0]()
