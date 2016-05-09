@@ -2,14 +2,12 @@ import numpy
 import random
 import math
 
-# A set of methods that return a perturber utility vector subject to parameters given to the constructor.
-
-# Usage
-# Perturber(utilities, comparitor, threshold).perturbing_method()
-# Example
-#  import Perturber, random
-#  perturbers = Perturber([-0.5, -1, 0.5, 1, 0], some_comparitor, 0.5).get_perturbers()
-#  result = random.choice(perturbers)
+# Set of methods that return a perturbed utility vector subject to params passed into the constructor.
+# Example usage
+#  import perturber, random
+#  my_comparitor = lambda x,y: 1 - sum([abs(x[i] - y[i]) for i in range(len(x))])/float(len(x))
+#  perturbers = perturber.Perturber([-0.5, -1, 0.5, 1, 0], my_comparitor, 0.75).get_perturbers()
+#  perturbed_utilities = random.choice(perturbers)()
 class Perturber:
     # Arguments
     #  utilities: A vector of floats with values in [-1,1]. Each element in the vector represents the utility of a
@@ -75,14 +73,11 @@ class Perturber:
 
         return result      
 
-    def h_log(s, logtext):
-        return '%s: %s' % (s.__class__.__name__, logtext)
-    
     # Perturb by randomly swapping 2 utilities
     def random_swap(s):
         found_result = False
         
-        # Only try 100 swaps, else the code may run forever
+        # Only try 100 swaps so that the code doesn't run forever
         for i in range(100):
             # Get 2 unequal indexes
             indexes = range(len(s.utilities))
@@ -98,7 +93,7 @@ class Perturber:
                 found_result = True
                 break
         
-        # If we successfully found a result that's close enough, return that. Else return original list.
+        # If we found a swap that meets the threshold requirement, return that. Else return the original list.
         if found_result:
             return result
         else:
@@ -126,5 +121,3 @@ if __name__ == '__main__':
     p = Perturber([random.random() * 2 -1 for i in range(100)], comparitor, 0.9)
     p.normal()
     p.remove_max()
-    p = Perturber([i/10. for i in range(10)], comparitor, 0.999)
-    print p.get_perturbers()[0]()
