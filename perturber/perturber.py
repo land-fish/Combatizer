@@ -58,15 +58,15 @@ class Perturber:
    
     # Removes top 10% of utility values and replaces them with random values 
     def remove_max(s):
-        remove_percent = .1
+        remove_ratio = .1
           #replace_num is the number of elements in the list to be changed
-        replace_num = int(math.ceil(len(s.utilities) * remove_percent)) 
-        top_percent_index = sorted(range(len(s.utilities)), key=lambda i: s.utilities[i], reverse=True)[:replace_num] 
+        replace_num = int(math.ceil(len(s.utilities) * remove_ratio)) 
+        top_ratio_index = sorted(range(len(s.utilities)), key=lambda i: s.utilities[i], reverse=True)[:replace_num] 
         
         #Replace top values with random values between -1 and 1
         while True:
             result = s.utilities
-            for aa in top_percent_index:
+            for aa in top_ratio_index:
                 result[aa] = random.random() * 2 - 1 
             if s.comparitor(s.utilities, result) >= s.threshold:
                 break
@@ -75,9 +75,9 @@ class Perturber:
 
     # Replaces set proportion of random utility values with 1 
     def false_highs(s):
-        replace_percent = .1
+        replace_ratio = .1
         #replace_num says how many utilites to replace and rounds up
-        replace_num = int(math.ceil(len(s.utilities) * replace_percent)) 
+        replace_num = int(math.ceil(len(s.utilities) * replace_ratio)) 
 
         while True:
             result = s.utilities
@@ -146,7 +146,7 @@ if __name__ == '__main__':
     comparitor = lambda x,y: 1 - sum([abs(x[i] - y[i]) for i in range(len(x))])/float(len(x))
     p = Perturber([random.random() * 2 -1 for i in range(10)], comparitor, 0.9)
     #p.normal()
-    #p.remove_max()
+    p.remove_max()
     p.false_highs()
     p = Perturber([i/10. for i in range(10)], comparitor, 0.999)
     print p.get_perturbers()[0]()
