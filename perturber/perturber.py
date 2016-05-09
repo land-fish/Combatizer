@@ -58,28 +58,36 @@ class Perturber:
    
     # Removes top 10% of utility values and replaces them with random values 
     def remove_max(s):
+        found_result = False
         remove_ratio = .1
           #replace_num is the number of elements in the list to be changed
         replace_num = int(math.ceil(len(s.utilities) * remove_ratio)) 
         top_ratio_index = sorted(range(len(s.utilities)), key=lambda i: s.utilities[i], reverse=True)[:replace_num] 
         
         #Replace top values with random values between -1 and 1
-        while True:
+        for bb in range(100):
             result = s.utilities
             for aa in top_ratio_index:
                 result[aa] = random.random() * 2 - 1 
             if s.comparitor(s.utilities, result) >= s.threshold:
+                found_result = True
                 break
-
-        return result      
+        
+        # If we found a swap that meets the threshold requirement, return that. Else return the original list.
+        if found_result:
+            return result
+        else:
+            return s.utilities
+ 
 
     # Replaces set proportion of random utility values with 1 
     def false_highs(s):
+        found_result = False
         replace_ratio = .1
         #replace_num says how many utilites to replace and rounds up
         replace_num = int(math.ceil(len(s.utilities) * replace_ratio)) 
 
-        while True:
+        for aa in range(100):
             result = s.utilities
             replace_list = []
             #For a random 10% of utilities, try to replace value with 1 until pertubation falls within expected interval 
@@ -90,9 +98,15 @@ class Perturber:
             for value in replace_list:
                 result[value] = 1
             if s.comparitor(s.utilities, result) >= s.threshold:
+                found_result = True
                 break
-
-        return result      
+        
+        # If we found a swap that meets the threshold requirement, return that. Else return the original list.
+        if found_result:
+            return result
+        else:
+            return s.utilities
+ 
 
  
 
@@ -144,10 +158,11 @@ class Perturber:
 # Used for testing
 if __name__ == '__main__':
     comparitor = lambda x,y: 1 - sum([abs(x[i] - y[i]) for i in range(len(x))])/float(len(x))
-    p = Perturber([random.random() * 2 -1 for i in range(10)], comparitor, 0.9)
+    #p = Perturber([random.random() * 2 -1 for i in range(10)], comparitor, 0.9)
+    p = Perturber([.0,.1,.2,.3,.4,.5,.6,.7,.8,.9], comparitor, 0.9)
     #p.normal()
-    p.remove_max()
-    p.false_highs()
+    #p.remove_max()
+    #p.false_highs()
     p = Perturber([i/10. for i in range(10)], comparitor, 0.999)
     print p.get_perturbers()[0]()
 
