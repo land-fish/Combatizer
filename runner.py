@@ -24,7 +24,7 @@ class Runner:
 		#given an agent, pick a random set of ut, gamma, comparison, threshold, 
 		uts = helper.generate_utils_list(numWorlds) #list of utilities
 		gammas = helper.generate_gamma_list(numWorlds)
-		comparisons = comparison_functions.getComparisonMetrics()[0:4]
+		comparisons = comparison_functions.getComparisonMetrics()
 
 		thresholds = [0.95]
 
@@ -50,7 +50,9 @@ class Runner:
 		return agentScores
 	
 	def run(s, ut, gamma, u_false, agent):
-		actionIndex = agent(u_false, gamma) #the index of the action the agent has picked 
+		u_agent = u_false[:]
+		gamma_agent = gamma[:]
+		actionIndex = agent(u_agent, gamma_agent) #the index of the action the agent has picked 
 		agentScore = ut[actionIndex]
 		return agentScore
 
